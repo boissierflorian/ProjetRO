@@ -5,6 +5,9 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include "utils/rand.hpp"
+
+using namespace cc::utils;
 
 /**
    Classe pour représenter une solution
@@ -67,10 +70,26 @@ public:
 
     return(sstr.str());
   }
+  
+  Solution generateNeighbor(const int offset = 10)
+  {
+    Solution neighbor(*this);
+    const unsigned size = neighbor.size();
+    int randomIndex = _rand->getInt(0, size - 1);
+    neighbor[randomIndex] = (neighbor[randomIndex] + offset) % size;
+    return neighbor;
+  }
+  
+  void setRand(Rand* rand)
+  {
+    _rand = rand;
+  }
 
 private:
   // quality of the solution
   int _fitness;
+  // Random generator
+  Rand* _rand;
 };
 
 /*
