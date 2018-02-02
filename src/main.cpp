@@ -27,6 +27,8 @@
 
 #include <solution.hpp>
 #include <evalCC.hpp>
+#include <algorithm.hpp>
+#include <algo_random.hpp>
 
 #include <chrono>
 #include <fstream>
@@ -35,10 +37,6 @@
 using namespace cc;
 using namespace artis::common;
 
-// constants related to the dimension of the optimization problem 
-const unsigned int size_stack = 5;     // maximum size of a stack
-const unsigned int n_destination = 8;  // maximum number of destination for a slab
-const unsigned int solution_size = n_destination + (size_stack - 1) * n_destination * n_destination; // solution size
 
 /*
     *** Coding of a solution ***
@@ -60,22 +58,61 @@ const unsigned int solution_size = n_destination + (size_stack - 1) * n_destinat
 */
 
 
-int main()
+int convertToInt(char* c, int default_value)
 {
-    // evaluation function from the Continuous Casting simulator
-    EvalCC eval;
+  int v = std::atoi(c);
 
-    // Declaration of one solution of the optimization problem
-    Solution s ;
+  if (v <= 0)
+	  return default_value;
+    
+  return v;
+}
 
-    // solution for random selection: all stacks have the same preference 1
-    s.resize(solution_size, 1);  // as an example, set all scores to one
+int main(int argc, char** argv)
+{
+  if (argc != 3)
+  {
+    std::cerr << "Usage ./src/cc-simulator-main <nom algo> <nb iterations>" << std::endl;
+    return -1;
+  }
 
-    // evaluation of the solution
-    eval(s);
+  // Parsing
+  std::string algoName(argv[1]);
+  int nbIter = convertToInt(argv[2], 5);
 
-    // print the result
-    std::cout << s.to_string() << std::endl;
+  // Initialisation de l'algorithme
+  Algorithm* algo(nullptr); 
+  
+  if (algoName == "random")
+  {
+      algo = new RandomAlgorithm(nbIter);
+  }
+  else
+  {
+    std::cerr << "Algorithme inconnu" << std::endl;
+    return -1;  
+  }
+  
+  // Éxécution de l'algorithm 
+  algo->execute();
+  // algo.printResult();
 
-    return 0;
+  // evaluation function from the Continuous Casting simulator
+ //EvalCC eval;
+
+  // Declaration of one solution of the optimization problem
+  //Solution s ;
+
+  // solution for random selection: all stacks have the same preference 1
+  //s.resize(solution_size, 1);  // as an example, set all scores to one
+
+  // evaluation of the solution
+  //eval(s);
+
+  // print the result
+  //std::cout << s.to_string() << std::endl;
+  
+  delete algo;
+  
+  return 0;
 }
