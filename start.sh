@@ -1,8 +1,13 @@
 #!/bin/bash
 cd build
 
+if [ $# != 1 ]; then
+   echo "Usage: ./start.sh <random/randomWalk>";
+   exit
+fi
+
 # Nom de l'algorithme
-algo="random"
+algo=$1
 # Nombre d'exécutions
 nbRun=5
 # Nombre d'itérations
@@ -13,6 +18,8 @@ echo 'Algorithm: ' $algo
 
 # Définition des colonnes
 if [ $algo == "random" ]; then
+	header='fitness'
+elif [ $algo == "randomWalk" ]; then
 	header='fitness'
 else
 	header='nbItr;fitness' 

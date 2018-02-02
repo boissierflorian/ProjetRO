@@ -9,7 +9,6 @@ public:
   RandomAlgorithm(int nbIter);
   ~RandomAlgorithm() override;
   void execute() override;
-  
 };
 
 #endif

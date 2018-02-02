@@ -29,6 +29,7 @@
 #include <evalCC.hpp>
 #include <algorithm.hpp>
 #include <algo_random.hpp>
+#include <algo_random_walk.hpp>
 
 #include <chrono>
 #include <fstream>
@@ -58,6 +59,7 @@ using namespace artis::common;
 */
 
 
+///////////////////////////////////////////////////////////
 int convertToInt(char* c, int default_value)
 {
   int v = std::atoi(c);
@@ -68,8 +70,11 @@ int convertToInt(char* c, int default_value)
   return v;
 }
 
+
+///////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
+	// Vérification des paramètres
   if (argc != 3)
   {
     std::cerr << "Usage ./src/cc-simulator-main <nom algo> <nb iterations>" << std::endl;
@@ -85,34 +90,22 @@ int main(int argc, char** argv)
   
   if (algoName == "random")
   {
-      algo = new RandomAlgorithm(nbIter);
+  	algo = new RandomAlgorithm(nbIter);
   }
+	else if (algoName == "randomWalk")
+	{
+		algo = new RandomWalkAlgorithm(nbIter);
+	}
   else
   {
     std::cerr << "Algorithme inconnu" << std::endl;
     return -1;  
   }
-  
-  // Éxécution de l'algorithm 
+  	
+	// Éxécution de l'algorithme
   algo->execute();
-  // algo.printResult();
 
-  // evaluation function from the Continuous Casting simulator
- //EvalCC eval;
-
-  // Declaration of one solution of the optimization problem
-  //Solution s ;
-
-  // solution for random selection: all stacks have the same preference 1
-  //s.resize(solution_size, 1);  // as an example, set all scores to one
-
-  // evaluation of the solution
-  //eval(s);
-
-  // print the result
-  //std::cout << s.to_string() << std::endl;
-  
+  // Suppression de l'algorithme
   delete algo;
-  
   return 0;
 }
