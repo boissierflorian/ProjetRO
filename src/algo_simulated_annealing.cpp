@@ -60,7 +60,7 @@ void SimulatedAnnealingAlgorithm::execute()
     if (delta >= 0)
     {
       double u = _rand.getDouble(); // 0.0 to 1.0
-      if (u >= std::exp((double) delta / (double) temperature))
+      if (u >= std::exp((double) std::abs(delta) / (double) temperature))
       {
         // Reset 
         currentSolution[randomIndex] = (currentSolution[randomIndex] - offset) % 100;
