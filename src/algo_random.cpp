@@ -41,5 +41,5 @@ void RandomAlgorithm::execute()
     }
   }
   
-  std::cout << minFitness << std::endl;
+  std::cout << _nbIter << ";" << minFitness << std::endl;
 }

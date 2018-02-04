@@ -6,8 +6,6 @@
 #include <iostream>
 
 
-const int RandomWalkAlgorithm::MaxSteps = 100;
-
 ///////////////////////////////////////////////////////////
 RandomWalkAlgorithm::RandomWalkAlgorithm(int nbIter) :
 Algorithm(nbIter)
@@ -35,7 +33,7 @@ void RandomWalkAlgorithm::execute()
   currentSolution.setRand(&_rand);
  
   int currentFitness(currentSolution.fitness());
-  int steps(RandomWalkAlgorithm::MaxSteps);
+  int steps(_nbIter);
   
   // The random walk algorithm goal is to achieve
   // a deep exploration of the solution neighborhood
@@ -53,7 +51,7 @@ void RandomWalkAlgorithm::execute()
     // Save random instance
     currentSolution.setRand(&_rand);
     
-    std::cout << currentFitness << std::endl;
+    std::cout << _nbIter << ";" <<  currentFitness << std::endl;
   }
   while (--steps > 0);
 }

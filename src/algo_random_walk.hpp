@@ -9,8 +9,6 @@ public:
   RandomWalkAlgorithm(int nbIter);
   ~RandomWalkAlgorithm() override;
   void execute() override;
-private:
-  static const int MaxSteps;
 };
 
 #endif
