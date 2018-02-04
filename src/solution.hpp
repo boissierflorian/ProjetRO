@@ -74,9 +74,9 @@ public:
   Solution generateNeighbor(const int offset = 10)
   {
     Solution neighbor(*this);
-    const unsigned size = neighbor.size();
+    const int size = neighbor.size();
     int randomIndex = _rand->getInt(0, size - 1);
-    neighbor[randomIndex] = (neighbor[randomIndex] + offset) % size;
+    neighbor[randomIndex] = (neighbor[randomIndex] + offset) % 100;
     return neighbor;
   }
   

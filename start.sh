@@ -1,8 +1,15 @@
 #!/bin/bash
+
+dirOutput="output"
+
+if [ ! -d "$dirOutput" ]; then
+	mkdir output
+fi
+
 cd build
 
 if [ $# != 1 ]; then
-   echo "Usage: ./start.sh <random/randomWalk>";
+   echo "Usage: ./start.sh <random/randomWalk/hcbi/hcfi>";
    exit
 fi
 

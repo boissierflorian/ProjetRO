@@ -31,7 +31,8 @@ void RandomWalkAlgorithm::execute()
   
   // Save random instance
   currentSolution.setRand(&_rand);
- 
+  
+  _eval(currentSolution);
   int currentFitness(currentSolution.fitness());
   int steps(_nbIter);
   

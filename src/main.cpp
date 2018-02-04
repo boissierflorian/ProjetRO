@@ -30,6 +30,7 @@
 #include <algorithm.hpp>
 #include <algo_random.hpp>
 #include <algo_random_walk.hpp>
+#include <algo_hill_climbing.hpp>
 
 #include <chrono>
 #include <fstream>
@@ -95,6 +96,14 @@ int main(int argc, char** argv)
 	else if (algoName == "randomWalk")
 	{
 		algo = new RandomWalkAlgorithm(nbIter);
+	}
+	else if (algoName == "hcbi")
+	{
+		algo = new HCBIAlgorithm(nbIter);
+	}
+	else if (algoName == "hcfi")
+	{
+		algo = new HCFIAlgorithm(nbIter);
 	}
   else
   {
