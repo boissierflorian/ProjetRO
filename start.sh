@@ -9,7 +9,7 @@ fi
 cd build
 
 if [ $# != 1 ]; then
-   echo "Usage: ./start.sh <random/randomWalk/hcbi/hcfi>";
+   echo "Usage: ./start.sh <random/randomWalk/hcbi/hcfi/sma>";
    exit
 fi
 

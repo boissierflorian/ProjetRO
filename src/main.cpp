@@ -31,6 +31,7 @@
 #include <algo_random.hpp>
 #include <algo_random_walk.hpp>
 #include <algo_hill_climbing.hpp>
+#include <algo_simulated_annealing.hpp>
 
 #include <chrono>
 #include <fstream>
@@ -104,6 +105,10 @@ int main(int argc, char** argv)
 	else if (algoName == "hcfi")
 	{
 		algo = new HCFIAlgorithm(nbIter);
+	}
+	else if (algoName == "sma")
+	{
+		algo = new SimulatedAnnealingAlgorithm(nbIter);
 	}
   else
   {
