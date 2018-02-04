@@ -25,8 +25,7 @@ echo 'Algorithm: ' $algo
 
 # Définition des colonnes
 header='nbItr;fitness'
-
-# Ajout des colonnes
+#Ajout des colonnes
 echo ${header} > ../output/${algo}.csv
 
 # Éxécution de l'algorithme
@@ -36,8 +35,7 @@ do
 	for((i=1; i <= ${nbRun}; i++))
 	do
 		echo -n $i' '
-		result=$(./src/cc-simulator-main ${algo} ${nbIter})
-		echo ${result} >> ../output/${algo}.csv
+		./src/cc-simulator-main ${algo} ${nbIter} >> ../output/${algo}.csv
 	done
 done
 # Saut à la ligne

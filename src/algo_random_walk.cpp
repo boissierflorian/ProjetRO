@@ -27,10 +27,9 @@ void RandomWalkAlgorithm::execute()
   // Solution initialization
   Solution currentSolution;
   currentSolution.resize(Algorithm::solution_size, 1);
-  Algorithm::randomSolution(currentSolution);
-  
   // Save random instance
   currentSolution.setRand(&_rand);
+  Algorithm::randomSolution(currentSolution);
   
   _eval(currentSolution);
   int currentFitness(currentSolution.fitness());
