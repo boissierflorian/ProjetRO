@@ -9,7 +9,7 @@
 const unsigned int Algorithm::size_stack = 5;
 const unsigned int Algorithm::n_destination = 8;
 const unsigned int Algorithm::solution_size = n_destination + (size_stack - 1) * n_destination * n_destination; // solution size
-const unsigned int Algorithm::n_threads = std::thread::hardware_concurrency;
+const unsigned int Algorithm::n_threads = std::thread::hardware_concurrency();
 
 
 ///////////////////////////////////////////////////////////
