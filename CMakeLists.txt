@@ -13,11 +13,11 @@ INCLUDE(CMakeCPack.cmake)
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11 -O2")
 
   if ("${CMAKE_BUILD_TYPE}" EQUAL "Debug" OR "${CMAKE_BUILD_TYPE}" EQUAL "RelWithDebInfo")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb3")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb3")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb3 -O2")
   endif ()
 endif ()
 
