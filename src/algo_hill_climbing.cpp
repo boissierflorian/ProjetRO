@@ -5,6 +5,7 @@
 #include "solution.hpp"
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 
 ///////////////////////////////////////////////////////////
@@ -30,38 +31,107 @@ void HCBIAlgorithm::execute()
   bool hasBestNeighbor(false);
   Solution bestNeighbor;
   
+  std::vector<HCBIThread> threads;
+  
   do {
     hasBestNeighbor = false;
     _eval(currentSolution);
-    int bestFitness(currentSolution.fitness());
 
     // For All Neighbors of the current solution
-    for (unsigned i = 0; i < currentSolution.size(); i++) {
-      currentSolution[i] = (currentSolution[i] + offset) % 100;
-      // Evaluate the Neighbor
-      _eval(currentSolution);
-      
-      // Fitness of neighbor is lower than the bestFitness
-      if (currentSolution.fitness() < bestFitness) {
-        // The BestNeighbor become the current neighbor
-        bestNeighbor = currentSolution;
-        // A best Neighbor has been found
-        hasBestNeighbor = true;
-        // The best Fitness is the fitness of the bestNeighbor
-        bestFitness = currentSolution.fitness();
-      }
-      
-      // Reset 
-      currentSolution[i] = (currentSolution[i] - offset) % 100;
+    int iterPerThread = Algorithm::solution_size / Algorithm::n_threads;
+    
+    // Initialize threads
+    for (i = 0; i < Algorithm::solution_size - iterPerThread; i+= iterPerThread)
+    {
+      HCBIThread thread(currentSolution, i, i + iterPerThread - 1, offset, _eval);
+      thread.start();
+      threads.push_back(thread);
     }
     
-    if (hasBestNeighbor) {
-      currentSolution = bestNeighbor;
+    // We are waiting all threads to finish
+    for (unsigned i = 0; i < threads.size(); i++)
+    {
+      threads[i].join();
     }
     
+    HCBIThread& minThread = std::min(threads.begin(); thread.end(); [&](HCBIThread& t1, HCBIThread& t2){
+      return t1.fitness() < t2.fitness();
+    });
+    
+    if (minThread.fitness() < currentSolution.fitness())
+    {
+      hasBestNeighbor = true;
+      currentSolution = minThread.getBestSolution();     
+    }
+ 
   } while(hasBestNeighbor && --nbSteps > 0);
   
   std::cout << _nbIter << ";" << currentSolution.fitness() << std::endl;
+}
+
+
+///////////////////////////////////////////////////////////
+HCBIThread::HCBIThread(Solution s, int start, int end, int offset, EvalCC& eval) :
+  _solution(s),
+  _start(start),
+  _end(end),
+  _offset(offset),
+  _eval(eval)
+{
+  
+}
+
+
+///////////////////////////////////////////////////////////
+void HCBIThread::start()
+{
+   _thread = std::thread(&HCBIThread::execute, this);
+}
+
+
+///////////////////////////////////////////////////////////
+void HCBIThread::join()
+{
+  _thread.join();
+}
+
+
+///////////////////////////////////////////////////////////
+void HCBIThread::execute()
+{
+  int bestFitness(999);
+  
+  for (int i = _start; i < _end; i++)
+  {
+    _solution[i] = (_solution[i] + _offset) % 100;
+    // Evaluate the Neighbor
+    _eval(_solution);
+      
+    // Fitness of neighbor is lower than the bestFitness
+    if (_solution.fitness() < bestFitness) {
+        _bestSolution = _solution;  
+      
+        // The best Fitness is the fitness of the bestNeighbor
+        bestFitness = _solution.fitness();
+      }
+      
+      // Reset 
+      _solution[i] = (_solution[i] - _offset) % 100;
+    }
+}
+
+
+///////////////////////////////////////////////////////////
+int HCBIThread::fitness()
+{
+  return _bestSolution.fitness();
+}
+
+
+///////////////////////////////////////////////////////////
+Solution& HCBIThread::getBestSolution()
+{
+  return _bestSolution;
 }
 
 

@@ -24,5 +24,6 @@ public:
   static const unsigned int size_stack;    // maximum size of a stack
   static const unsigned int n_destination; // maximum number of destination for a slab
   static const unsigned int solution_size; // solution size
+  static const unsigned int n_threads; // maximum number of threads
 };
 #endif
