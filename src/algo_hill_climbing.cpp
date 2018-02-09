@@ -26,6 +26,7 @@ void HCBIAlgorithm::execute()
   Algorithm::randomSolution(currentSolution);
   
   const int offset = 10;
+  int nbSteps(10);
   bool hasBestNeighbor(false);
   Solution bestNeighbor;
   
@@ -58,7 +59,7 @@ void HCBIAlgorithm::execute()
       currentSolution = bestNeighbor;
     }
     
-  } while(hasBestNeighbor);
+  } while(hasBestNeighbor && --nbSteps > 0);
   
   std::cout << _nbIter << ";" << currentSolution.fitness() << std::endl;
 }
