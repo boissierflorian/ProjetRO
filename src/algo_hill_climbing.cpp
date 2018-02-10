@@ -7,30 +7,6 @@
 #include <vector>
 #include <algorithm>
 #include <thread>
-#include <chrono>
-#include <mutex>
-
-
-int g_counter = 0;
-std::mutex g_mutex;
-
-Solution getMinSolution(std::vector<HCBIThread>& threads)
-{
-    unsigned bestIndex = 0;
-    int bestFitness = 999;
-    
-    for (unsigned i = 0; i < threads.size(); i++)
-    {	
-	if (threads[i].fitness() < bestFitness)
-	{
-	    bestIndex = i;
-	    bestFitness = threads[i].fitness();
-	}
-    }
-
-    return threads[bestIndex].getBestSolution();
-}
-
 
 
 ///////////////////////////////////////////////////////////
@@ -42,56 +18,79 @@ HCBIAlgorithm::~HCBIAlgorithm(){}
 
 
 ///////////////////////////////////////////////////////////
+void run(std::vector<Solution>& solutions, Solution solution, int start, int end)
+{
+    Solution bestSolution = solution;
+    EvalCC eval;
+
+    for (int i = start; i < end; i++)
+    {
+	solution[i] = (solution[i] + 10) % 100;
+
+	eval(solution);
+
+	if (solution.fitness() < bestSolution.fitness())
+	{
+	    bestSolution = solution;
+	}
+
+	// reset
+	solution[i] = (solution[i] - 10) % 100;
+    }
+
+    solutions.push_back(bestSolution);
+}
+
+
+///////////////////////////////////////////////////////////
 void HCBIAlgorithm::execute() 
 {
     // Solution initialization
     Solution currentSolution;
     currentSolution.resize(Algorithm::solution_size, 1);
+
     // Save random instance
     currentSolution.setRand(&_rand);
     Algorithm::randomSolution(currentSolution);
-  
-    const int offset = 10;
-    int nbSteps(_nbIter);
-    bool hasBestNeighbor(false);
-    Solution bestNeighbor;
-  
-    std::vector<HCBIThread> threads;
-    int iterPerThread = Algorithm::solution_size / Algorithm::n_threads;
+
+    _eval(currentSolution);
+    int currentFitness(currentSolution.fitness());
     
+    bool hasBestNeighbor(false);
+    Solution bestNeighbor = currentSolution;
+    
+    std::vector<Solution> bestSolutions;
+    std::vector<std::thread> threads;
+
     do {
-	std::cout << "STEP " << nbSteps << std::endl;
-	g_counter = 0;
 	hasBestNeighbor = false;
-	_eval(currentSolution);
+	bestSolutions.clear();
 
-	// For All Neighbors of the current solution
-	threads.clear();
-
-	// Initialize threads
-	for (int i = 0; i <= Algorithm::solution_size - iterPerThread; i+= iterPerThread)
+	for (unsigned i = 0; i < Algorithm::solution_size; i += 66)
 	{
 	    Solution s(currentSolution);
-	    HCBIThread thread(s, i, i + iterPerThread - 1, offset);
-	    thread.start();
-	    threads.push_back(thread);
+	    std::thread th(&run, std::ref(bestSolutions), s, i, i + 65);
+	    threads.push_back(std::move(th));
+	}
+   
+	// Wait for all threads joins
+	for (auto& th : threads)
+	{
+	    if (th.joinable())
+		th.join();
 	}
 
-	while (g_counter != Algorithm::n_threads)
+	
+	for (Solution& s : bestSolutions)
 	{
-	    std::this_thread::sleep_for (std::chrono::seconds(1));
-	};
-        
-	Solution minNeighbor = getMinSolution(threads);
-    
-	if (minNeighbor.fitness() < currentSolution.fitness())
-	{
-	    hasBestNeighbor = true;
-	    currentSolution = minNeighbor;
+	    if (s.fitness() < currentFitness)
+	    {
+		currentSolution = s;
+		currentFitness = s.fitness();
+		hasBestNeighbor = true;
+	    }
 	}
-
-	std::cout << "BEST SOL " <<  minNeighbor.fitness() << std::endl;
-    } while(hasBestNeighbor && --nbSteps > 0);
+    } while(hasBestNeighbor);
 
   
     std::cout << _nbIter << ";" << currentSolution.fitness() << std::endl;
@@ -99,95 +98,6 @@ void HCBIAlgorithm::execute()
 
 
 ///////////////////////////////////////////////////////////
-HCBIThread::HCBIThread(Solution s, int start, int end, int offset) :
-    _solution(s),
-    _start(start),
-    _end(end),
-    _offset(offset),
-    _finished(false)
-{
-  
-}
-
-
-///////////////////////////////////////////////////////////
-HCBIThread::HCBIThread(const HCBIThread& t)
-{
-    this->_bestFitness = t._bestFitness;
-    this->_bestSolution = t._bestSolution;
-    //this->_eval = t._eval;
-}
-  
-
-///////////////////////////////////////////////////////////
-void HCBIThread::start()
-{
-    _thread = std::thread(&HCBIThread::execute, this);
-    _thread.detach();
-}
-
-
-///////////////////////////////////////////////////////////
-bool HCBIThread::hasFinished()
-{
-    return _finished;
-}
-
-
-///////////////////////////////////////////////////////////
-void HCBIThread::execute()
-{
-    _bestFitness = 999;
-
-    try
-    {
-	for (int i = _start; i < _end; i++)
-	{
-	    _solution[i] = (_solution[i] + _offset) % 100;
-
-	    // Evaluate the Neighbor
-	    _eval(_solution);
-      
-	    // Fitness of neighbor is lower than the bestFitness
-	    if (_solution.fitness() < _bestFitness) {
-		_bestSolution = _solution;
-      
-		// The best Fitness is the fitness of the bestNeighbor
-		_bestFitness = _solution.fitness();
-	    }
-
-	    // Reset 
-	    _solution[i] = (_solution[i] - _offset) % 100;
-	}
-
-	std::cout << "Best fitness" << _bestFitness << std::endl;
-    }
-    catch (std::exception& e)
-    {
-	std::cout << e.what() << std::endl;
-    }
-
-    std::cout << "FINISHED" << std::endl;
-    _finished = true;
-
-    std::lock_guard<std::mutex> lock(g_mutex);
-    g_counter++;
-}
-
-
-///////////////////////////////////////////////////////////
-int HCBIThread::fitness() const
-{
-    return _bestFitness;
-}
-
-
-///////////////////////////////////////////////////////////
-Solution& HCBIThread::getBestSolution()
-{
-    return _bestSolution;
-}
-
 
 ///////////////////////////////////////////////////////////
 HCFIAlgorithm::HCFIAlgorithm(int nbIter) : Algorithm(nbIter){}

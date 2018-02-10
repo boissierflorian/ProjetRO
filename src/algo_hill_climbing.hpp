@@ -1,8 +1,12 @@
 #ifndef HILL_CLIMBING_HPP
 #define HILL_CLIMBING_HPP
 
+#include <atomic>
+#include <vector>
+
 #include "algorithm.hpp"
-#include <thread>
+
+void run(std::vector<Solution>& solutions, Solution solution, int start, int end);
 
 class HCBIAlgorithm  : public Algorithm
 {
@@ -19,29 +23,5 @@ public:
     ~HCFIAlgorithm() override;
     void execute() override;
 };
-
-class HCBIThread
-{
-public:
-    HCBIThread(Solution s, int start, int end, int offset);
-    HCBIThread(const HCBIThread& t);
-    void start();
-    void execute();
-    bool hasFinished();
-    int fitness() const;
-    Solution& getBestSolution();
-private:
-    Solution _solution;
-    int _start;
-    int _end;
-    int _offset;
-    EvalCC _eval;
-    bool _finished;
-    Solution _bestSolution;
-    int _bestFitness;
-    std::thread _thread;
-};
-
-Solution getMinSolution(std::vector<HCBIThread>& threads);
 
 #endif

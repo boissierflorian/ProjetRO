@@ -23,6 +23,10 @@ public:
     _fitness = _s.fitness();
   }
 
+    ~Solution(){
+	//clear();
+    }
+
   Solution& operator=(const Solution & _s) {
     this->resize(_s.size());
     for(unsigned int i = 0; i < _s.size(); i++)
