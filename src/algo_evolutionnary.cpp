@@ -4,9 +4,12 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <thread>
+#include <vector>
+#include<functional>
+#include <evalCC.hpp>
 
 #include "algo_evolutionnary.hpp"
-
 
 
 ///////////////////////////////////////////////////////////
@@ -18,14 +21,25 @@ EvolutionnaryAlgorithm::~EvolutionnaryAlgorithm(){}
 
 
 ///////////////////////////////////////////////////////////
+void run(std::vector<std::reference_wrapper<Solution>> genitors)
+{
+  EvalCC eval;
+  for (Solution& solution : genitors)
+     eval(solution);
+}
+
+
+///////////////////////////////////////////////////////////
 void EvolutionnaryAlgorithm::execute()
 {
   // Parameters
   int nbEval(_nbIter);
-  const int lambda = 20;
-  const int mu = 10;
+  const int lambda = 200;
+  const int mu = 100;
   const int offset = 10;
   const double mutationProbability = 1 / Algorithm::solution_size;
+  const int genitorPerThread = mu / 4;
+  int tmp = 0;
   
   // Generate a population of lambda solution
   std::vector<Solution> parents;
@@ -53,9 +67,14 @@ void EvolutionnaryAlgorithm::execute()
   std::sort(parents.begin(), parents.end(), cmp);
   
   std::vector<Solution> genitors;
+  bool hasMutated(false);
+  std::vector<std::reference_wrapper<Solution>> threadGenitors;
+  std::vector<std::thread> threads;
   
   do {
     genitors.clear();
+    threads.clear();
+    threadGenitors.clear();
 
     // Select the mu best parents (genitors)
     for (unsigned i = 0; i < mu; i++)
@@ -66,6 +85,8 @@ void EvolutionnaryAlgorithm::execute()
     // Mutation of genitors (children)
     for (Solution& genitor : genitors)
     {
+      hasMutated = false;
+      
       for (unsigned index = 0; index < Algorithm::solution_size; index++)
       {
         double u = _rand.getDouble();
@@ -73,10 +94,26 @@ void EvolutionnaryAlgorithm::execute()
         if (u <= mutationProbability)
         {
           genitor[index] = (genitor[index] + offset) % 100;
+          hasMutated = true;
         }
       }
       
-      _eval(genitor);
+      if (hasMutated) {
+        tmp++;
+        threadGenitors.push_back(std::ref(genitor));
+        
+        if (tmp == genitorPerThread) {
+          threads.push_back(std::thread(&run, threadGenitors));
+          tmp = 0;
+          threadGenitors.clear();
+        }
+      }
+    }
+    
+    // Waiting for threads to finish
+    for (auto& th : threads)
+    {
+      if (th.joinable()) th.join();
     }
     
     // Add left parents
@@ -97,7 +134,7 @@ void EvolutionnaryAlgorithm::execute()
   std::cout << _nbIter << ";";
   
   for (auto& i : parents) {
-    std::cout << i.fitness() << ";";
+    std::cout << i.fitness() << ",";
   }
   std::cout << std::endl;
 }
