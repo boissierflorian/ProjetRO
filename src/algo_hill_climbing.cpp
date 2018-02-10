@@ -25,7 +25,7 @@ void run(std::vector<Solution>& solutions, Solution solution, int start, int end
 
     for (int i = start; i < end; i++)
     {
-			solution[i] = (solution[i] + 10) % 100;
+			solution[i] = (solution[i] + 50) % 100;
 
 			eval(solution);
 
@@ -35,7 +35,7 @@ void run(std::vector<Solution>& solutions, Solution solution, int start, int end
 			}
 
 			// reset
-			solution[i] = (solution[i] - 10) % 100;
+			solution[i] = (solution[i] - 50) % 100;
 		}
 
     solutions.push_back(bestSolution);
@@ -126,7 +126,7 @@ void HCFIAlgorithm::execute()
     int currentFitness;
     int nbEval(_nbIter);
     const int lastElementIndex = Algorithm::solution_size - 1;
-    const int offset = 10;
+    const int offset = 50;
  
     do 
     {

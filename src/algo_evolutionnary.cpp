@@ -35,9 +35,9 @@ void EvolutionnaryAlgorithm::execute()
   // Parameters
   int nbEval(_nbIter);
   const int lambda = 200;
-  const int mu = 100;
-  const int offset = 10;
-  const double mutationProbability = 1 / Algorithm::solution_size;
+  const int mu = 80;
+  const int offset = 50;
+  const double mutationProbability = 0.01;
   const int genitorPerThread = mu / 4;
   int tmp = 0;
   

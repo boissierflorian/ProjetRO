@@ -37,7 +37,7 @@ void SimulatedAnnealingAlgorithm::execute()
   
   // Random generation stuff
   const int lastElementIndex = Algorithm::solution_size - 1;
-  const int offset = 10;
+  const int offset = 50;
   
   // Parameters
   double temp(1000);

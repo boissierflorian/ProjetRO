@@ -51,7 +51,7 @@ void RandomWalkAlgorithm::execute()
     // Save random instance
     currentSolution.setRand(&_rand);
     
-    std::cout << _nbIter << ";" <<  currentFitness << std::endl;
+    std::cout << (_nbIter - steps) << ";" <<  currentFitness << std::endl;
   }
   while (--steps > 0);
 }
