@@ -82,7 +82,6 @@ void SimulatedAnnealingAlgorithm::execute()
     if (currentSolution.fitness() < bestFitness)
     {
 	bestFitness = currentSolution.fitness();
-	std::cout << bestFitness << std::endl;
     }
 
     // Temperature update
