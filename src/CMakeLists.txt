@@ -18,6 +18,6 @@ ADD_EXECUTABLE(cc-simulator-main evalCC.hpp evalCC.cpp solution.hpp cluster.hpp 
   run_out_table.cpp stack.hpp stack.cpp stock.hpp stock.cpp utils/rand.cpp
   utils/rand.hpp algorithm.hpp algorithm.cpp algo_random.hpp algo_random.cpp
   algo_random_walk.hpp algo_random_walk.cpp algo_hill_climbing.hpp algo_hill_climbing.cpp
-  algo_simulated_annealing.hpp algo_simulated_annealing.cpp)
+  algo_simulated_annealing.hpp algo_simulated_annealing.cpp algo_evolutionnary.hpp algo_evolutionnary.cpp)
 
 TARGET_LINK_LIBRARIES(cc-simulator-main pthread)

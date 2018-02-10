@@ -32,6 +32,7 @@
 #include <algo_random_walk.hpp>
 #include <algo_hill_climbing.hpp>
 #include <algo_simulated_annealing.hpp>
+#include <algo_evolutionnary.hpp>
 
 #include <chrono>
 #include <fstream>
@@ -110,6 +111,10 @@ int main(int argc, char** argv)
     {
 	algo = new SimulatedAnnealingAlgorithm(nbIter);
     }
+		else if (algoName == "evol")
+		{
+			algo = new EvolutionnaryAlgorithm(nbIter);
+		}
     else
     {
 	std::cerr << "Algorithme inconnu" << std::endl;

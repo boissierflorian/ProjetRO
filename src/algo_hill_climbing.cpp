@@ -25,18 +25,18 @@ void run(std::vector<Solution>& solutions, Solution solution, int start, int end
 
     for (int i = start; i < end; i++)
     {
-	solution[i] = (solution[i] + 10) % 100;
+			solution[i] = (solution[i] + 10) % 100;
 
-	eval(solution);
+			eval(solution);
 
-	if (solution.fitness() < bestSolution.fitness())
-	{
-	    bestSolution = solution;
-	}
+			if (solution.fitness() < bestSolution.fitness())
+			{
+					bestSolution = solution;
+			}
 
-	// reset
-	solution[i] = (solution[i] - 10) % 100;
-    }
+			// reset
+			solution[i] = (solution[i] - 10) % 100;
+		}
 
     solutions.push_back(bestSolution);
 }
@@ -63,33 +63,33 @@ void HCBIAlgorithm::execute()
     std::vector<std::thread> threads;
 
     do {
-	hasBestNeighbor = false;
-	bestSolutions.clear();
+				hasBestNeighbor = false;
+				bestSolutions.clear();
 
-	for (unsigned i = 0; i < Algorithm::solution_size; i += 66)
-	{
-	    Solution s(currentSolution);
-	    std::thread th(&run, std::ref(bestSolutions), s, i, i + 65);
-	    threads.push_back(std::move(th));
-	}
-   
-	// Wait for all threads joins
-	for (auto& th : threads)
-	{
-	    if (th.joinable())
-		th.join();
-	}
+				for (unsigned i = 0; i < Algorithm::solution_size; i += 66)
+				{
+						Solution s(currentSolution);
+						std::thread th(&run, std::ref(bestSolutions), s, i, i + 65);
+						threads.push_back(std::move(th));
+				}
 
-	
-	for (Solution& s : bestSolutions)
-	{
-	    if (s.fitness() < currentFitness)
-	    {
-		currentSolution = s;
-		currentFitness = s.fitness();
-		hasBestNeighbor = true;
-	    }
-	}
+				// Wait for all threads joins
+				for (auto& th : threads)
+				{
+						if (th.joinable())
+							th.join();
+				}
+
+
+				for (Solution& s : bestSolutions)
+				{
+						if (s.fitness() < currentFitness)
+						{
+					currentSolution = s;
+					currentFitness = s.fitness();
+					hasBestNeighbor = true;
+						}
+				}
     } while(hasBestNeighbor);
 
   
