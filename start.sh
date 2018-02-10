@@ -18,7 +18,7 @@ algo=$1
 # Nombre d'exécutions
 nbRun=5
 # Nombre d'itérations
-nbEvalList="10 50 100"
+nbEvalList="10 50 100 500"
 
 # Aléatoire
 echo 'Algorithm: ' $algo

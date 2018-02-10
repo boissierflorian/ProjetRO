@@ -26,20 +26,29 @@ void SimulatedAnnealingAlgorithm::execute()
   // Solution initialization
   Solution currentSolution;
   currentSolution.resize(Algorithm::solution_size, 1);
+  
   // Save random instance
   currentSolution.setRand(&_rand);
   Algorithm::randomSolution(currentSolution);
-  
-  int steps(_nbIter);
-  int currentFitness;
+
+  // Evaluate current solution
+  _eval(currentSolution);
+  int currentFitness = currentSolution.fitness();
   
   // Random generation stuff
   const int lastElementIndex = Algorithm::solution_size - 1;
   const int offset = 10;
   
   // Parameters
-  int temperature(100);
-  const int alpha = 0.89;
+  double temp(1000);
+  const double alpha(0.85);
+
+  // Keep track of the best solution encountered
+  Solution bestSolution = currentSolution;
+  int bestFitness = currentSolution.fitness();
+
+  // Maximum iterations
+  int steps(_nbIter);
   
   do
   {
@@ -47,29 +56,38 @@ void SimulatedAnnealingAlgorithm::execute()
     _eval(currentSolution);
     currentFitness = currentSolution.fitness();
     
-    // Random neighbor
+    // Generate a random neighbor
     int randomIndex = _rand.getInt(0, lastElementIndex);
     currentSolution[randomIndex] = (currentSolution[randomIndex] + offset) % 100;
     
     // Evaluate random neighbor
     _eval(currentSolution);
     int neighborFitness(currentSolution.fitness());
-    
-    int delta = neighborFitness - currentFitness;
-    
-    if (delta >= 0)
+
+    // This neigbor is worse than the current solution
+    if (neighborFitness >= currentFitness)
     {
-      double u = _rand.getDouble(); // 0.0 to 1.0
-      if (u >= std::exp((double) std::abs(delta) / (double) temperature))
-      {
-        // Reset 
-        currentSolution[randomIndex] = (currentSolution[randomIndex] - offset) % 100;
-        currentSolution.fitness(currentFitness);
-      }
+	// Generate a number between 0.0 and 1.0
+	double u = _rand.getDouble();
+
+	// We don't accept a worse solution
+	if (u >= std::exp((double) currentFitness - neighborFitness / temp))
+	{
+	    // Reset 
+	    currentSolution[randomIndex] = (currentSolution[randomIndex] - offset) % 100;
+	    currentSolution.fitness(currentFitness);
+	}
     }
-      
-    temperature *= alpha;
+
+    if (currentSolution.fitness() < bestFitness)
+    {
+	bestFitness = currentSolution.fitness();
+	std::cout << bestFitness << std::endl;
+    }
+
+    // Temperature update
+    temp *= alpha;
   } while (--steps > 0);
   
-  std::cout << _nbIter << ";" << currentFitness << std::endl;
+  std::cout << _nbIter << ";" << bestFitness << std::endl;
 }
