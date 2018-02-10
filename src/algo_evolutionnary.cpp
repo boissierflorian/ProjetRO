@@ -22,10 +22,10 @@ void EvolutionnaryAlgorithm::execute()
 {
   // Parameters
   int nbEval(_nbIter);
-  const int lambda = 10;
-  const int mu = 5;
+  const int lambda = 20;
+  const int mu = 10;
   const int offset = 10;
-  const double mutationProbability = 1 / 2;
+  const double mutationProbability = 1 / Algorithm::solution_size;
   
   // Generate a population of lambda solution
   std::vector<Solution> parents;
@@ -60,23 +60,23 @@ void EvolutionnaryAlgorithm::execute()
     // Select the mu best parents (genitors)
     for (unsigned i = 0; i < mu; i++)
     {
-      genitors.push_back(std::move(parents[i]));
-      parents.erase(parents.begin());
+      genitors.push_back(parents[i]);
     }
 
     // Mutation of genitors (children)
     for (Solution& genitor : genitors)
     {
-      for (unsigned index = 0; index < Algorithm::solution_size ; index ++)
+      for (unsigned index = 0; index < Algorithm::solution_size; index++)
       {
         double u = _rand.getDouble();
 
         if (u <= mutationProbability)
         {
           genitor[index] = (genitor[index] + offset) % 100;
-          _eval(genitor);
         }
       }
+      
+      _eval(genitor);
     }
     
     // Add left parents
