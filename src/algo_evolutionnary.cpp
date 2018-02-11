@@ -131,10 +131,8 @@ void EvolutionnaryAlgorithm::execute()
     }
   } while(--nbEval > 0);
   
-  std::cout << _nbIter << ";";
-  
   for (auto& i : parents) {
-    std::cout << i.fitness() << ",";
+      std::cout << _nbIter << ";" << i.fitness() << std::endl;
   }
-  std::cout << std::endl;
+  
 }
